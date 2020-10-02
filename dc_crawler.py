@@ -1,7 +1,7 @@
 from selenium import webdriver
 from bs4 import BeautifulSoup
 import requests
-from config import headers, url, json_path
+from config import headers, url
 import time
 import json
 import os
@@ -89,7 +89,7 @@ class DCinsideCrawler:
             json_data[no] = info
         return json_data
 
-    def save_data(self, min_no=1, max_no=10, save_step=100):
+    def save_data(self, json_path, min_no=1, max_no=10, save_step=100):
         if os.path.exists(json_path):
             with open(json_path, "r", encoding="UTF-8") as f:
                 json_data = json.load(f)
@@ -98,12 +98,12 @@ class DCinsideCrawler:
 
         st = min_no
 
-        with open(json_path, "w", encoding="UTF-8") as f:
-            while st < max_no:
-                ed = min(st + save_step, max_no)
-                info = self.get_data(st, ed)
+        while st < max_no:
+            ed = min(st + save_step, max_no)
+            info = self.get_data(st, ed)
 
-                json_data.update(info)
+            json_data.update(info)
+            print(f"Save {json_path} ...")
+            with open(json_path, "w", encoding="UTF-8") as f:
                 json.dump(json_data, f, ensure_ascii=False, indent="\t")
-                st = ed
-
+            st = ed
